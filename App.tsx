@@ -1,46 +1,74 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
-import { Github, Mail, Phone, ExternalLink, ChevronDown, Code, Brain, Database, Cpu, Layers, User } from 'lucide-react';
+import { Github, Mail, Phone, ExternalLink, ChevronDown, Code, Brain, Database, Cpu, Layers, Briefcase } from 'lucide-react';
 import Cursor from './components/Cursor';
 import Section from './components/Section';
 import { PROJECTS, INTERNSHIPS, EDUCATION, SKILL_CATEGORIES } from './constants';
 
 const AnimatedAvatar = () => (
   <motion.div
-    className="relative w-40 h-40 md:w-48 md:h-48 flex items-center justify-center rounded-[3rem] bg-gray-900 border border-white/10 overflow-hidden shadow-2xl"
+    className="relative w-48 h-48 md:w-56 md:h-56 flex items-center justify-center rounded-[3rem] bg-gray-900 border border-white/10 overflow-hidden shadow-2xl group"
     animate={{ 
-      y: [0, -10, 0],
-      rotate: [0, 1, 0, -1, 0]
+      y: [0, -8, 0],
     }}
     transition={{ 
-      duration: 6, 
+      duration: 5, 
       repeat: Infinity, 
       ease: "easeInOut" 
     }}
   >
-    {/* Minimalist face-less guy representation */}
-    <div className="absolute inset-0 bg-gradient-to-tr from-blue-600/20 to-transparent" />
-    <svg 
-      viewBox="0 0 100 100" 
-      className="w-2/3 h-2/3 text-gray-400 opacity-60 fill-current"
-    >
+    <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(59,130,246,0.15),transparent)]" />
+    
+    <svg viewBox="0 0 100 100" className="w-4/5 h-4/5 text-gray-400 fill-current relative z-10">
+      {/* Head */}
       <motion.circle 
-        cx="50" cy="35" r="18" 
-        animate={{ scale: [1, 1.05, 1] }}
-        transition={{ duration: 4, repeat: Infinity }}
+        cx="50" cy="25" r="12" 
+        animate={{ y: [0, 1, 0] }}
+        transition={{ duration: 3, repeat: Infinity }}
       />
+      {/* Torso */}
       <motion.path 
-        d="M20 90 Q50 60 80 90" 
-        strokeWidth="10" 
-        stroke="currentColor" 
-        fill="none"
-        strokeLinecap="round"
-        animate={{ d: ["M22 90 Q50 65 78 90", "M20 90 Q50 60 80 90", "M22 90 Q50 65 78 90"] }}
+        d="M35 45 Q50 38 65 45 L60 75 Q50 80 40 75 Z" 
+        animate={{ d: ["M35 45 Q50 38 65 45 L60 75 Q50 80 40 75 Z", "M34 46 Q50 39 66 46 L61 76 Q50 81 39 76 Z", "M35 45 Q50 38 65 45 L60 75 Q50 80 40 75 Z"] }}
         transition={{ duration: 5, repeat: Infinity }}
       />
+      {/* Arm holding the bag */}
+      <motion.path 
+        d="M65 45 L75 60" 
+        stroke="currentColor" 
+        strokeWidth="6" 
+        strokeLinecap="round" 
+        fill="none" 
+      />
+      {/* The Bag (Briefcase/Laptop bag) */}
+      <motion.g
+        animate={{ rotate: [-2, 2, -2], x: [0, 1, 0] }}
+        transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+      >
+        <rect x="68" y="60" width="18" height="14" rx="2" className="text-blue-500/80" />
+        <path d="M73 60 L73 57 Q77 54 81 57 L81 60" stroke="currentColor" strokeWidth="2" fill="none" />
+      </motion.g>
+      {/* Left arm */}
+      <motion.path 
+        d="M35 45 L25 65" 
+        stroke="currentColor" 
+        strokeWidth="6" 
+        strokeLinecap="round" 
+        fill="none"
+        animate={{ rotate: [0, -5, 0] }}
+        transition={{ duration: 6, repeat: Infinity }}
+      />
     </svg>
-    <div className="absolute inset-0 border-[8px] border-blue-500/5 rounded-[3rem]" />
+    
+    {/* Animated scanning line effect */}
+    <motion.div 
+      className="absolute top-0 left-0 w-full h-[2px] bg-blue-500/30 blur-sm z-20"
+      animate={{ top: ['0%', '100%', '0%'] }}
+      transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+    />
+    
+    <div className="absolute inset-0 border-[12px] border-blue-500/5 rounded-[3rem] pointer-events-none" />
   </motion.div>
 );
 
@@ -61,7 +89,7 @@ const App: React.FC = () => {
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
     if (element) {
-      const headerOffset = 100;
+      const headerOffset = 80;
       const elementPosition = element.getBoundingClientRect().top;
       const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
 
@@ -69,6 +97,8 @@ const App: React.FC = () => {
         top: offsetPosition,
         behavior: "smooth"
       });
+    } else {
+      console.warn(`Section with id "${id}" not found.`);
     }
   };
 
@@ -129,14 +159,16 @@ const App: React.FC = () => {
             {navItems.map((item) => (
               <button
                 key={item.id}
+                type="button"
                 onClick={() => scrollToSection(item.id)}
-                className="text-sm font-medium text-gray-400 hover:text-white transition-colors uppercase tracking-widest"
+                className="text-sm font-medium text-gray-400 hover:text-white transition-colors uppercase tracking-widest focus:outline-none"
               >
                 {item.name}
               </button>
             ))}
           </div>
           <button 
+            type="button"
             onClick={handleGithubClick}
             className="bg-white text-black px-5 py-2 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-blue-500 hover:text-white transition-all flex items-center gap-2"
           >
@@ -148,7 +180,7 @@ const App: React.FC = () => {
 
       <main className="relative pt-24">
         <div className="absolute inset-0 pointer-events-none hidden lg:block overflow-hidden">
-          <svg className="w-full h-full opacity-10">
+          <svg className="w-full h-full opacity-5">
             <motion.path
               d="M 50% 0 L 50% 100%"
               stroke="white"
@@ -167,7 +199,7 @@ const App: React.FC = () => {
             transition={{ delay: 1.2, duration: 1 }}
             className="mb-8 relative"
           >
-            <div className="absolute inset-0 bg-blue-500 blur-[100px] opacity-20 -z-10" />
+            <div className="absolute inset-0 bg-blue-500 blur-[120px] opacity-20 -z-10" />
             <AnimatedAvatar />
           </motion.div>
           
@@ -176,7 +208,7 @@ const App: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1.4, duration: 1 }}
           >
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter mb-4 bg-clip-text text-transparent bg-gradient-to-b from-white to-gray-500">
+            <h1 className="text-5xl md:text-7xl lg:text-9xl font-black tracking-tighter mb-4 bg-clip-text text-transparent bg-gradient-to-b from-white to-gray-500">
               SYED OWAIS
             </h1>
           </motion.div>
@@ -197,12 +229,14 @@ const App: React.FC = () => {
             className="flex flex-wrap justify-center gap-4"
           >
             <button 
+              type="button"
               onClick={() => scrollToSection('projects')} 
               className="px-8 py-4 bg-blue-600 rounded-full font-bold hover:bg-blue-500 hover:-translate-y-1 transition-all shadow-xl shadow-blue-500/20"
             >
               View Projects
             </button>
             <button 
+              type="button"
               onClick={() => scrollToSection('contact')} 
               className="px-8 py-4 border border-white/10 rounded-full font-bold hover:bg-white/5 hover:-translate-y-1 transition-all"
             >
@@ -398,7 +432,7 @@ const App: React.FC = () => {
       <footer className="py-12 px-8 border-t border-white/5 text-center text-gray-600 text-sm mono">
         <div className="flex flex-col items-center gap-6">
           <div className="flex gap-8">
-            <button onClick={handleGithubClick} className="hover:text-white transition-colors">GITHUB</button>
+            <button onClick={handleGithubClick} className="hover:text-white transition-colors focus:outline-none">GITHUB</button>
             <a href="mailto:syedowaismohi@gmail.com" className="hover:text-white transition-colors">EMAIL</a>
           </div>
           <div>© {new Date().getFullYear()} SYED OWAIS • BUILT WITH PASSION</div>
